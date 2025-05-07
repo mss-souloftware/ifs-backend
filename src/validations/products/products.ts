@@ -14,6 +14,20 @@ const getSingleProduct = Joi.object({
   body: Joi.object({})
 })
 
+const consultationQuestionSchema: Joi.Schema = Joi.array().items(
+  Joi.object({
+    questionText: Joi.string().required(),
+    answers: Joi.array().items(
+      Joi.object({
+        text: Joi.string().required(),
+        isCorrect: Joi.boolean().required(),
+        message: Joi.string().required(),
+        followUpQuestions: Joi.link('#questionSchema').optional()
+      })
+    ).min(2).required()
+  })
+).id('questionSchema')
+
 const createProduct = Joi.object({
   query: Joi.object({}),
   params: Joi.object({}),
@@ -25,7 +39,7 @@ const createProduct = Joi.object({
     price: Joi.number().required(),
     directCheckout: Joi.boolean().required(),
     reviewedBy: Joi.array().items(Joi.number()).optional(),
-    consultationQuestions: Joi.object().optional()
+    consultationQuestions: consultationQuestionSchema.optional()
   })
 })
 

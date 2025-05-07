@@ -24,7 +24,7 @@ type TCreateCategoryBody = {
 }
 
 type TUpdateCategoryParams = {
-  categoryId: string
+  categoryId: string,
 }
 
 type TUpdateCategoryBody = {
@@ -74,6 +74,25 @@ type TDeleteCategoryFaqParams = {
   faqId: string
 }
 
+const getProductsByCategory = async (
+  req: AuthRequest<TUpdateCategoryParams>,
+  res: Response
+): Promise<Response> => {
+  const categoryId = Number(req.params.categoryId)
+
+  try {
+    const products = await prisma.products.findMany({
+      where: { categoryId }
+    })
+
+    const response = okResponse(products)
+    return res.status(response.status.code).json(response)
+  } catch (error) {
+    console.error(error)
+    const response = serverErrorResponse('Failed to fetch products')
+    return res.status(response.status.code).json(response)
+  }
+}
 // categories controllers
 const getAllCategories = async (req: AuthRequest, res: Response): Promise<Response> => {
   try {
@@ -319,7 +338,7 @@ export default {
   deleteCategory,
 
   updateCategoryRecommendedProducts,
-
+  getProductsByCategory,
   getAllCategoryFaqs,
   createCategoryFaq,
   updateCategoryFaq,

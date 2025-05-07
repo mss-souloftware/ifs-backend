@@ -64,6 +64,14 @@ const updateCategoryRecommendedProducts = Joi.object({
   })
 })
 
+const getProductsByCategory = Joi.object({
+  query: Joi.object({}),
+  params: Joi.object({
+    categoryId: Joi.number().required()
+  }),
+  body: Joi.object({})
+})
+
 // faqs validations
 const getAllCategoryFaqs = Joi.object({
   query: Joi.object({}),
@@ -112,7 +120,7 @@ export default {
   deleteCategory,
 
   updateCategoryRecommendedProducts,
-
+  getProductsByCategory,
   getAllCategoryFaqs,
   createCategoryFaq,
   updateCategoryFaq,

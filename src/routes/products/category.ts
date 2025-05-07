@@ -44,6 +44,14 @@ router.patch(
   categoriesControllers.updateCategoryRecommendedProducts
 )
 
+// products by category routes
+router.get(
+  '/:categoryId/products',
+  validateRequest(categoriesValidations.getProductsByCategory),
+  categoriesControllers.getProductsByCategory
+)
+
+
 // categories routes
 router.get(
   '/',

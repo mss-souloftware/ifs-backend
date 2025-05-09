@@ -1,205 +1,224 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Users {
-    id        Int        @id @default(autoincrement())
-    name      String
-    email     String     @unique
-    role      USER_ROLES @default(USER)
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  role      USER_ROLES @default(USER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-    UserPassword UserPassword?
-    UserAddress  UserAddress[]
-    UserOTP      UserOTP[]
+  UserPassword UserPassword?
+  UserAddress  UserAddress[]
+  UserOTP      UserOTP[]
+  Orders       Orders[]
 }
 
 model UserPassword {
-    id        Int      @id @default(autoincrement())
-    userId    Int      @unique
-    password  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    User Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserOTP {
-    id                 Int      @id @default(autoincrement())
-    userId             Int
-    otp                String
-    isExpired          Boolean  @default(false)
-    expirationDateTime DateTime
-    createdAt          DateTime @default(now())
-    User               Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  otp                String
+  isExpired          Boolean  @default(false)
+  expirationDateTime DateTime
+  createdAt          DateTime @default(now())
+  User               Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserAddress {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    address   String
-    city      String
-    state     String
-    country   String
-    zipCode   String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  address   String
+  city      String
+  state     String
+  country   String
+  zipCode   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    User Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ProductCategory {
-    id                    Int                   @id @default(autoincrement())
-    name                  String
-    picture               String?
-    shortDescription      String
-    longDescription       String
-    needConsultation      Boolean
-    type                  PRODUCT_CATEGORY_TYPE
-    consultationQuestions Json?
-    createdAt             DateTime              @default(now())
-    updatedAt             DateTime              @updatedAt
+  id                    Int                   @id @default(autoincrement())
+  name                  String
+  picture               String?
+  shortDescription      String
+  longDescription       String
+  needConsultation      Boolean
+  type                  PRODUCT_CATEGORY_TYPE
+  consultationQuestions Json?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
 
-    Products                      Products[]
-    CategoryFaqs                  CategoryFaqs[]
-    RecommendedProductsOfCategory RecommendedProductsOfCategory[]
+  Products                      Products[]
+  CategoryFaqs                  CategoryFaqs[]
+  RecommendedProductsOfCategory RecommendedProductsOfCategory[]
 }
 
 model CategoryFaqs {
-    id         Int      @id @default(autoincrement())
-    categoryId Int
-    question   String
-    answer     String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  categoryId Int
+  question   String
+  answer     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-    ProductCategory ProductCategory @relation(fields: [categoryId], references: [id])
+  ProductCategory ProductCategory @relation(fields: [categoryId], references: [id])
 }
 
 model RecommendedProductsOfCategory {
-    id              Int             @id @default(autoincrement())
-    categoryId      Int
-    productId       Int
-    description     String
-    tags            Json?
-    createdAt       DateTime        @default(now())
-    updatedAt       DateTime        @updatedAt
-    ProductCategory ProductCategory @relation(fields: [categoryId], references: [id])
-    Products        Products        @relation(fields: [productId], references: [id])
+  id              Int             @id @default(autoincrement())
+  categoryId      Int
+  productId       Int
+  description     String
+  tags            Json?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  ProductCategory ProductCategory @relation(fields: [categoryId], references: [id])
+  Products        Products        @relation(fields: [productId], references: [id])
 }
 
 model Products {
-    id                    Int      @id @default(autoincrement())
-    name                  String
-    thumbnail             String
-    description           String
-    price                 Float
-    categoryId            Int
-    directCheckout        Boolean
-    consultationQuestions Json?
-    createdAt             DateTime @default(now())
-    updatedAt             DateTime @updatedAt
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  thumbnail             String
+  description           String
+  price                 Float
+  categoryId            Int
+  directCheckout        Boolean
+  consultationQuestions Json?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
-    ProductCategory               ProductCategory                 @relation(fields: [categoryId], references: [id])
-    RecommendedProductsOfCategory RecommendedProductsOfCategory[]
-    ProductFaqs                   ProductFaqs[]
-    ProductInfo                   ProductInfo?
-    ProductReviewedBy             ProductReviewedBy[]
+  ProductCategory               ProductCategory                 @relation(fields: [categoryId], references: [id])
+  RecommendedProductsOfCategory RecommendedProductsOfCategory[]
+  ProductFaqs                   ProductFaqs[]
+  ProductInfo                   ProductInfo?
+  ProductReviewedBy             ProductReviewedBy[]
+  Orders                        Orders[]
 }
 
 model ProductFaqs {
-    id        Int      @id @default(autoincrement())
-    productId Int
-    question  String
-    answer    String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  productId Int
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    Products Products @relation(fields: [productId], references: [id])
+  Products Products @relation(fields: [productId], references: [id])
 }
 
 model ProductInfo {
-    id          Int      @id @default(autoincrement())
-    productId   Int      @unique
-    description String?
-    quickView   String?
-    sideEffects String?
-    moreInfo    String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  productId   Int      @unique
+  description String?
+  quickView   String?
+  sideEffects String?
+  moreInfo    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    Products Products? @relation(fields: [productId], references: [id])
+  Products Products? @relation(fields: [productId], references: [id])
 }
 
 model ProductReviewedBy {
-    id        Int      @id @default(autoincrement())
-    productId Int
-    teamId    Int
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  productId Int
+  teamId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    Products    Products    @relation(fields: [productId], references: [id])
-    TeamSection TeamSection @relation(fields: [teamId], references: [id])
+  Products    Products    @relation(fields: [productId], references: [id])
+  TeamSection TeamSection @relation(fields: [teamId], references: [id])
 }
 
 model TeamSection {
-    id                Int                 @id @default(autoincrement())
-    name              String
-    position          String
-    picture           String?
-    bio               String
-    createdAt         DateTime            @default(now())
-    updatedAt         DateTime            @updatedAt
-    ProductReviewedBy ProductReviewedBy[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  position          String
+  picture           String?
+  bio               String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ProductReviewedBy ProductReviewedBy[]
 }
 
 model BlogCategories {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    Blogs     Blogs[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Blogs     Blogs[]
 }
 
 model Blogs {
-    id         Int      @id @default(autoincrement())
-    categoryId Int
-    title      String
-    thumbnail  String
-    content    String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  categoryId Int
+  title      String
+  thumbnail  String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-    Category BlogCategories @relation(fields: [categoryId], references: [id])
+  Category BlogCategories @relation(fields: [categoryId], references: [id])
 }
 
 model Pages {
-    id        Int      @id @default(autoincrement())
-    name      String   @unique
-    content   Json
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// orders api
+
+model Orders {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  userId    Int
+  quantity  Int
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Products Products @relation(fields: [productId], references: [id])
+  Users    Users    @relation(fields: [userId], references: [id])
+
+  @@map("orders")
 }
 
 enum USER_ROLES {
-    ADMIN
-    USER
+  ADMIN
+  USER
 }
 
 enum GENDER {
-    MALE
-    FEMALE
+  MALE
+  FEMALE
 }
 
 enum PRODUCT_CATEGORY_TYPE {
-    MEN_HEALTH
-    WOMEN_HEALTH
-    RESPIRATORY_AND_DIGESTIVE
-    GENERAL_HEALTH
+  MEN_HEALTH
+  WOMEN_HEALTH
+  RESPIRATORY_AND_DIGESTIVE
+  GENERAL_HEALTH
 }
